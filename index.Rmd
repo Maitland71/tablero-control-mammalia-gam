@@ -12,6 +12,7 @@ library(sf)
 library(leaflet)
 library(knitr)
 library(kableExtra)
+library(dplyr)
 
 # Registros de presencia de Mammalia
 registros_presencia_mammalia = st_read("https://raw.githubusercontent.com/atlas-servicios-ecosistemicos-gam/datos/master/biodiversidad/presencia/mammalia.geojson")
@@ -51,18 +52,18 @@ valueBox(length(unique(registros_presencia_mammalia[["species"]])), icon = "fa-p
 
 ### Registros de presencia de especies
 ```{r}
-# Se extraen las observaciones ordenadas por orden alfabético de especies
-mammalia.orden <- order(registros_presencia_mammalia$species)
-# Se genera un nuevo data frame ordenado
-mammalia.ordenadoxespecie <- registros_presencia_mammalia[mammalia.orden,]
-# Se formatea la tabla con el nuevo data frame
-kable(
-  mammalia.ordenadoxespecie[, c("species","genus","family","order","year")], 
-) %>%
-kable_styling() %>%
-scroll_box(
-  width = "600px", 
-  height = "250px", 
-  fixed_thead = TRUE
-)
+registros_presencia_mammalia %>%
+  select(species, order) %>%
+  arrange(species) %>%
+  st_drop_geometry() %>%
+  kable()%>%
+  kable_styling() %>%
+  scroll_box(
+    width = "600px", 
+    height = "500px", 
+    fixed_thead = TRUE
+  )
+
+
+
 ```
